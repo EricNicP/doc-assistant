@@ -33,12 +33,36 @@ ${context.slice(0, 80000)}
 USER QUESTION:
 ${question}`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: prompt,
-    });
+    const CANDIDATE_MODELS = [
+      "gemini-flash-lite-latest",
+      "gemini-3.5-flash-lite",
+      "gemini-3.5-flash",
+      "gemini-3.7-flash",
+      "gemini-3.8-flash",
+      "gemini-3.6-flash",
+    ];
 
-    const answerText = response.text || "No response generated.";
+    let answerText = "";
+    let lastError: any = null;
+
+    for (const model of CANDIDATE_MODELS) {
+      try {
+        const response = await ai.models.generateContent({
+          model,
+          contents: prompt,
+        });
+        answerText = response.text || "No response generated.";
+        lastError = null;
+        break;
+      } catch (err: any) {
+        console.warn(`Model ${model} failed, trying next fallback:`, err?.message || err);
+        lastError = err;
+      }
+    }
+
+    if (lastError && !answerText) {
+      throw lastError;
+    }
 
     return NextResponse.json({
       success: true,

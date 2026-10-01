@@ -343,7 +343,7 @@ export default function Home() {
                   </h2>
                 </div>
                 <p className="text-xs text-slate-400 mb-4">
-                  Asks questions strictly against full document context via GPT-4o-mini (Zero Hallucination mode).
+                  Asks questions strictly against full document context via Gemini (Zero Hallucination mode).
                 </p>
 
                 {/* Chat Messages */}
